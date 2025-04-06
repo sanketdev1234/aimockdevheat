@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NeuroRegister | AI Interview System</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --neural-primary: #00f0ff;
+      --neural-secondary: #7b2dff;
+      --neural-dark: #0a0e17;
+      --neural-card: rgba(15, 23, 42, 0.7);
+    }
+    
+    body {
+      background-color: var(--neural-dark);
+      background-image: 
+        radial-gradient(circle at 25% 25%, rgba(123, 45, 255, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 75% 75%, rgba(0, 240, 255, 0.15) 0%, transparent 40%);
+      color: #e2e8f0;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .neural-card {
+      background: var(--neural-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      border-radius: 16px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+    }
+    
+    .gradient-text {
+      background: linear-gradient(90deg, var(--neural-primary), var(--neural-secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    
+    .glow-button {
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .glow-button::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        to bottom right,
+        rgba(0, 240, 255, 0.3),
+        rgba(123, 45, 255, 0.3),
+        transparent
+      );
+      transform: rotate(30deg);
+      animation: shine 3.5s infinite;
+    }
+    
+    @keyframes shine {
+      0% { transform: translateX(-100%) rotate(30deg); }
+      100% { transform: translateX(100%) rotate(30deg); }
+    }
+    
+    .input-field {
+      background: rgba(255, 255, 255, 0.05);
+      transition: all 0.3s ease;
+    }
+    
+    .input-field:focus {
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 0 2px rgba(0, 240, 255, 0.3);
+    }
+    
+    .floating {
+      animation: floating 6s ease-in-out infinite;
+    }
+    
+    @keyframes floating {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0px); }
+    }
+    
+    .password-strength {
+      height: 4px;
+      transition: all 0.3s ease;
+    }
+  </style>
+</head>
+<body class="min-h-screen overflow-x-hidden">
+  <!-- Floating AI Elements -->
+  <div class="absolute -right-20 top-1/4 opacity-10 floating">
+    <i class="fas fa-atom text-8xl text-blue-400"></i>
+  </div>
+  <div class="absolute -left-20 bottom-1/4 opacity-10 floating" style="animation-delay: 2s;">
+    <i class="fas fa-network-wired text-8xl text-purple-400"></i>
+  </div>
+
+  <div class="container mx-auto px-4 py-12 flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-md">
+      <div class="neural-card p-8 animate__animated animate__fadeInUp">
+        <div class="text-center mb-8">
+          <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+            <i class="fas fa-user-plus text-3xl text-white"></i>
+          </div>
+          <h1 class="text-3xl font-bold gradient-text mb-2">NeuroRegister</h1>
+          <p class="text-gray-400">Create your AI interview account</p>
+        </div>
+
+        <% if (typeof error !== 'undefined' && error) { %>
+          <div class="mb-6 p-4 bg-red-900/50 border-l-4 border-red-500 rounded-r-lg animate__animated animate__shakeX">
+            <div class="flex items-center">
+              <i class="fas fa-exclamation-circle text-red-400 mr-3"></i>
+              <span class="text-red-100"><%= error %></span>
+            </div>
+          </div>
+        <% } %>
+
+        <form action="/register" method="POST" class="space-y-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-400 mb-2">Username</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-user text-gray-500"></i>
+              </div>
+              <input type="text" name="username" required 
+                class="input-field w-full pl-10 pr-4 py-3 border border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Choose a username">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-400 mb-2">Email</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-envelope text-gray-500"></i>
+              </div>
+              <input type="email" name="email" required 
+                class="input-field w-full pl-10 pr-4 py-3 border border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="your@email.com">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-400 mb-2">Password</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-lock text-gray-500"></i>
+              </div>
+              <input type="password" name="password" id="password" required 
+                class="input-field w-full pl-10 pr-4 py-3 border border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Create a password">
+            </div>
+            <div class="mt-2 grid grid-cols-4 gap-1">
+              <div id="strength-1" class="password-strength bg-gray-700 rounded"></div>
+              <div id="strength-2" class="password-strength bg-gray-700 rounded"></div>
+              <div id="strength-3" class="password-strength bg-gray-700 rounded"></div>
+              <div id="strength-4" class="password-strength bg-gray-700 rounded"></div>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-400 mb-2">Confirm Password</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-lock text-gray-500"></i>
+              </div>
+              <input type="password" name="confirmPassword" required 
+                class="input-field w-full pl-10 pr-4 py-3 border border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Confirm your password">
+            </div>
+          </div>
+
+          <div class="flex items-center">
+            <input id="terms" name="terms" type="checkbox" required 
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-800 rounded">
+            <label for="terms" class="ml-2 block text-sm text-gray-400">
+              I agree to the <a href="#" class="text-blue-400 hover:text-blue-300">Terms</a> and <a href="#" class="text-blue-400 hover:text-blue-300">Privacy Policy</a>
+            </label>
+          </div>
+
+          <button type="submit" 
+            class="w-full glow-button py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg font-bold text-white relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20">
+            <span class="relative z-10">
+              <i class="fas fa-user-plus mr-2"></i> Create Neural Account
+            </span>
+          </button>
+        </form>
+
+        <div class="mt-6 text-center">
+          <p class="text-sm text-gray-400">
+            Already have an account? 
+            <a href="/login" class="font-medium text-blue-400 hover:text-blue-300 transition-colors">Sign in here</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script>
+    // Password strength indicator
+    document.getElementById('password').addEventListener('input', function(e) {
+      const password = e.target.value;
+      const strengthBars = [
+        document.getElementById('strength-1'),
+        document.getElementById('strength-2'),
+        document.getElementById('strength-3'),
+        document.getElementById('strength-4')
+      ];
+      
+      // Reset all bars
+      strengthBars.forEach(bar => {
+        bar.classList.remove('bg-red-500', 'bg-yellow-500', 'bg-blue-500', 'bg-green-500');
+        bar.classList.add('bg-gray-700');
+      });
+      
+      if (password.length > 0) {
+        strengthBars[0].classList.remove('bg-gray-700');
+        strengthBars[0].classList.add('bg-red-500');
+      }
+      
+      if (password.length >= 6) {
+        strengthBars[1].classList.remove('bg-gray-700');
+        strengthBars[1].classList.add('bg-yellow-500');
+      }
+      
+      if (password.length >= 8 && /[A-Z]/.test(password) && /[0-9]/.test(password)) {
+        strengthBars[2].classList.remove('bg-gray-700');
+        strengthBars[2].classList.add('bg-blue-500');
+      }
+      
+      if (password.length >= 10 && /[A-Z]/.test(password) && /[0-9]/.test(password) && /[^A-Za-z0-9]/.test(password)) {
+        strengthBars[3].classList.remove('bg-gray-700');
+        strengthBars[3].classList.add('bg-green-500');
+      }
+    });
+
+    // Form submission animation
+    document.querySelector('form').addEventListener('submit', function(e) {
+      const button = this.querySelector('button[type="submit"]');
+      button.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> Creating Account...';
+      button.classList.add('cursor-not-allowed', 'opacity-75');
+    });
+  </script>
+</body>
+</html>
