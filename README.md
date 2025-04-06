@@ -74,4 +74,38 @@ mock-interview-ai/
 │   └── register.ejs
 ├── app.js                 # Main application
 └── package.json
-   
+
+
+
+
+
+![Screenshot 2025-04-07 000024](https://github.com/user-attachments/assets/881e0f8b-36c4-47e2-97a3-990725c751eb)
+
+
+
+![Screenshot 2025-04-07 000040](https://github.com/user-attachments/assets/fcc6e6cd-9c7b-4766-95aa-6b61d7da74c0)
+
+![Screenshot 2025-04-07 000126](https://github.com/user-attachments/assets/4b1aa48c-4cf8-408b-a4d9-fd7104469753)
+
+![Screenshot 2025-04-07 000134](https://github.com/user-attachments/assets/0d2366ff-b91f-4541-abaa-6afdc2a14512)
+
+![Screenshot 2025-04-07 000140](https://github.com/user-attachments/assets/c82c6ca1-4ba9-453a-91bc-093d3720d323)
+
+![Screenshot 2025-04-07 000153](https://github.com/user-attachments/assets/1c145c33-f082-4cc7-8778-3e380cafa00b)
+
+![Screenshot 2025-04-07 000204](https://github.com/user-attachments/assets/5448f8ab-7ce6-4f32-93b4-8cf61404a7e6)
+
+![Screenshot 2025-04-07 000255](https://github.com/user-attachments/assets/93312493-9473-4dcd-97cc-846385cc9cd7)
+
+![Screenshot 2025-04-07 000308](https://github.com/user-attachments/assets/29ada405-4bcf-490a-b9d9-d1b40e5c8588)
+
+![Screenshot 2025-04-07 000319](https://github.com/user-attachments/assets/e74b1dc4-0386-44ca-8638-a7bc118acaa2)
+
+
+
+
+
+
+
+
+
