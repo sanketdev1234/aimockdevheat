@@ -137,12 +137,38 @@
     .stagger-delay-1 { animation-delay: 0.1s; }
     .stagger-delay-2 { animation-delay: 0.2s; }
     .stagger-delay-3 { animation-delay: 0.3s; }
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 12px 24px;
+      background: rgba(0, 240, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      border-radius: 8px;
+      transform: translateX(200%);
+      transition: transform 0.3s ease-out;
+      z-index: 1000;
+    }
+    .toast.show {
+      transform: translateX(0);
+    }
   </style>
 </head>
 <body class="min-h-screen overflow-x-hidden">
   <div class="neural-path"></div>
   
   <%- include('partials/navbar', {activePage: 'interview'}) %>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast neural-card hidden">
+    <div class="flex items-center">
+      <i class="fas fa-check-circle text-green-400 mr-3"></i>
+      <span id="toast-message">Interview ready for retry!</span>
+    </div>
+  </div>
 
   <div class="container mx-auto px-4 py-12 relative z-10">
     <!-- Dashboard Header -->
@@ -159,77 +185,73 @@
     </div>
 
     <!-- Stats Overview -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-  <!-- Total Interviews Card -->
-  <div class="neural-card p-6 fade-in stagger-delay-1">
-    <div class="flex justify-between items-start">
-      <div>
-        <p class="text-gray-400 text-sm">Total Interviews</p>
-        <h3 class="text-3xl font-bold mt-1">
-          <% if (typeof interviewCount !== 'undefined') { %>
-            <%= interviewCount %>
-          <% } else { %>
-            <%= interviews.length %>
-          <% } %>
-        </h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      <!-- Total Interviews Card -->
+      <div class="neural-card p-6 fade-in stagger-delay-1">
+        <div class="flex justify-between items-start">
+          <div>
+            <p class="text-gray-400 text-sm">Total Interviews</p>
+            <h3 class="text-3xl font-bold mt-1">
+              <% if (typeof interviewCount !== 'undefined') { %>
+                <%= interviewCount %>
+              <% } else { %>
+                <%= interviews.length %>
+              <% } %>
+            </h3>
+          </div>
+          <div class="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center">
+            <i class="fas fa-chart-line text-blue-400"></i>
+          </div>
+        </div>
+        <div class="mt-4 pt-4 border-t border-gray-800 flex items-center">
+          <span class="text-green-400 text-sm flex items-center">
+            <i class="fas fa-arrow-up mr-1"></i>
+            <% 
+              const growthPercent = 12;
+              const newThisMonth = Math.ceil((typeof interviewCount !== 'undefined' ? interviewCount : interviews.length) * (growthPercent/100));
+            %>
+            <%= newThisMonth %> new this month
+          </span>
+        </div>
       </div>
-      <div class="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center">
-        <i class="fas fa-chart-line text-blue-400"></i>
-      </div>
-    </div>
-    <div class="mt-4 pt-4 border-t border-gray-800 flex items-center">
-      <span class="text-green-400 text-sm flex items-center">
-        <i class="fas fa-arrow-up mr-1"></i>
-        <% 
-          // Calculate percentage growth (example calculation)
-          const growthPercent = 12; // Default value
-          const newThisMonth = Math.ceil((typeof interviewCount !== 'undefined' ? interviewCount : interviews.length) * (growthPercent/100));
-        %>
-        <%= newThisMonth %> new this month
-      </span>
-    </div>
-  </div>
 
-  <!-- Average Score Card -->
-  <div class="neural-card p-6 fade-in stagger-delay-2">
-    <div class="flex justify-between items-start">
-      <div>
-        <p class="text-gray-400 text-sm">Average Score</p>
-        <h3 class="text-3xl font-bold mt-1"><%= averageScore || 'N/A' %>%</h3>
+      <!-- Average Score Card -->
+      <div class="neural-card p-6 fade-in stagger-delay-2">
+        <div class="flex justify-between items-start">
+          <div>
+            <p class="text-gray-400 text-sm">Average Score</p>
+            <h3 class="text-3xl font-bold mt-1"><%= averageScore || 'N/A' %>%</h3>
+          </div>
+          <div class="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center">
+            <i class="fas fa-star text-purple-400"></i>
+          </div>
+        </div>
+        <div class="mt-4">
+          <div class="w-full bg-gray-800 rounded-full h-2">
+            <div class="bg-gradient-to-r from-blue-400 to-purple-500 h-2 rounded-full skill-bar" 
+                 style="width: <%= averageScore || 0 %>%"></div>
+          </div>
+        </div>
       </div>
-      <div class="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center">
-        <i class="fas fa-star text-purple-400"></i>
+
+      <!-- AI Recommendations Card -->
+      <div class="neural-card p-6 fade-in stagger-delay-3">
+        <div class="flex justify-between items-start">
+          <div>
+            <p class="text-gray-400 text-sm">AI Recommendations</p>
+            <h3 class="text-3xl font-bold mt-1"><%= recommendationsCount || 0 %></h3>
+          </div>
+          <div class="w-12 h-12 rounded-full bg-teal-500/10 flex items-center justify-center">
+            <i class="fas fa-robot text-teal-400"></i>
+          </div>
+        </div>
+        <div class="mt-4 pt-4 border-t border-gray-800">
+          <a href="#recommendations" class="text-sm text-blue-400 hover:text-blue-300 transition-colors">
+            <i class="fas fa-eye mr-2"></i> View Suggestions
+          </a>
+        </div>
       </div>
     </div>
-    <div class="mt-4">
-      <div class="w-full bg-gray-800 rounded-full h-2">
-        <div class="bg-gradient-to-r from-blue-400 to-purple-500 h-2 rounded-full skill-bar" 
-             style="width: <%= averageScore || 0 %>%"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- AI Recommendations Card -->
-  <div class="neural-card p-6 fade-in stagger-delay-3">
-    <div class="flex justify-between items-start">
-      <div>
-        <p class="text-gray-400 text-sm">AI Recommendations</p>
-        <h3 class="text-3xl font-bold mt-1"><%= recommendationsCount || 0 %></h3>
-      </div>
-      <div class="w-12 h-12 rounded-full bg-teal-500/10 flex items-center justify-center">
-        <i class="fas fa-robot text-teal-400"></i>
-      </div>
-    </div>
-    <div class="mt-4 pt-4 border-t border-gray-800">
-      <a href="#recommendations" class="text-sm text-blue-400 hover:text-blue-300 transition-colors">
-        <i class="fas fa-eye mr-2"></i> View Suggestions
-      </a>
-    </div>
-  </div>
-</div>
-
-
-
 
     <!-- Recent Interviews -->
     <div class="neural-card p-8 mb-12 animate__animated animate__fadeInUp">
@@ -255,14 +277,31 @@
                   </p>
                 </div>
                 <div class="flex space-x-3">
-                  <a href="#" class="text-sm px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors">
+                  <a href="/interview/review/<%= interview._id %>" 
+                     class="text-sm px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors">
                     <i class="fas fa-eye mr-2"></i> Review
                   </a>
-                  <a href="#" class="text-sm px-4 py-2 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 rounded-lg transition-colors">
-                    <i class="fas fa-redo mr-2"></i> Retry
-                  </a>
+                  
+
+                  
+                  <form action="/interview/retry/<%= interview._id %>" method="POST" class="inline">
+                    <button type="submit" 
+                            class="text-sm px-4 py-2 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 rounded-lg transition-colors">
+                      <i class="fas fa-redo mr-2"></i> Retry
+                    </button>
+                  </form>
                 </div>
               </div>
+              
+
+
+              <% if (interview.isRetry) { %>
+                <div class="mt-2">
+                  <span class="text-xs px-2 py-1 bg-purple-500/20 text-purple-400 rounded-full">
+                    <i class="fas fa-redo mr-1"></i> Retry attempt
+                  </span>
+                </div>
+              <% } %>
             </div>
           <% }); %>
         <% } else { %>
@@ -400,17 +439,12 @@
     document.addEventListener('DOMContentLoaded', () => {
       const skillBars = document.querySelectorAll('.skill-bar');
       skillBars.forEach(bar => {
-        // Reset width to 0 to allow animation
         const targetWidth = bar.style.width;
         bar.style.width = '0';
-        
-        // Trigger animation after a small delay
-        setTimeout(() => {
-          bar.style.width = targetWidth;
-        }, 300);
+        setTimeout(() => { bar.style.width = targetWidth }, 300);
       });
       
-      // Add hover effect to cards
+      // Card hover effects
       const cards = document.querySelectorAll('.neural-card');
       cards.forEach(card => {
         card.addEventListener('mouseenter', () => {
@@ -420,6 +454,27 @@
           card.style.transform = '';
         });
       });
+
+      // Show toast notification if coming from retry
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has('retrySuccess')) {
+        showToast('Interview ready for retry! The original prompt has been loaded.');
+      }
+
+      // Toast notification function
+      function showToast(message) {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+        
+        toastMessage.textContent = message;
+        toast.classList.remove('hidden');
+        toast.classList.add('show');
+        
+        setTimeout(() => {
+          toast.classList.remove('show');
+          setTimeout(() => toast.classList.add('hidden'), 300);
+        }, 3000);
+      }
     });
   </script>
 </body>

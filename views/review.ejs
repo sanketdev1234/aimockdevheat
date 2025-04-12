@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>Review Interview | NeuroDash</title>
+  <style>
+    :root {
+      --neural-primary: #00f0ff;
+      --neural-secondary: #7b2dff;
+      --neural-dark: #0a0e17;
+      --neural-card: rgba(15, 23, 42, 0.7);
+    }
+    
+    body {
+      background-color: var(--neural-dark);
+      background-image: 
+        radial-gradient(circle at 25% 25%, rgba(123, 45, 255, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 75% 75%, rgba(0, 240, 255, 0.15) 0%, transparent 40%);
+      color: #e2e8f0;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .neural-card {
+      background: var(--neural-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      border-radius: 16px;
+    }
+    
+    .response-container {
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+  </style>
+</head>
+<body class="min-h-screen overflow-x-hidden">
+  <%- include('partials/navbar', {activePage: 'history'}) %>
+
+  <div class="container mx-auto px-4 py-12">
+    <div class="neural-card p-8 max-w-4xl mx-auto">
+      <div class="flex items-center mb-8">
+        <div class="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center mr-4">
+          <i class="fas fa-file-alt text-white"></i>
+        </div>
+        <h2 class="text-2xl font-bold" style="background: linear-gradient(90deg, #00f0ff, #7b2dff); -webkit-background-clip: text; background-clip: text; color: transparent;">Interview Review</h2>
+      </div>
+
+      <div class="space-y-6">
+        <!-- Interview Type Badge -->
+        <div>
+          <span class="px-3 py-1 rounded-full text-xs font-medium 
+            <%= interview.interviewType === 'technical' ? 'bg-blue-500/20 text-blue-400' : 
+                interview.interviewType === 'behavioral' ? 'bg-purple-500/20 text-purple-400' : 
+                'bg-teal-500/20 text-teal-400' %>">
+            <i class="fas fa-<%= interview.interviewType === 'technical' ? 'code' : 
+                             interview.interviewType === 'behavioral' ? 'comments' : 
+                             'project-diagram' %> mr-1"></i>
+            <%= interview.interviewType.charAt(0).toUpperCase() + interview.interviewType.slice(1) %>
+          </span>
+        </div>
+
+        <!-- Original Prompt -->
+        <div>
+          <h3 class="text-sm font-medium text-gray-400 mb-2">ORIGINAL PROMPT</h3>
+          <div class="neural-card p-4"><%= interview.prompt %></div>
+        </div>
+
+        <!-- AI Response -->
+        <div>
+          <h3 class="text-sm font-medium text-gray-400 mb-2">AI RESPONSE</h3>
+          <div class="neural-card p-4 response-container"><%= interview.response %></div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-end space-x-4 pt-6">
+          <form action="/interview/retry/<%= interview._id %>" method="POST" class="inline">
+            <button type="submit" 
+                    class="px-6 py-2 bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg">
+              <i class="fas fa-redo mr-2"></i> Retry This Question
+            </button>
+          </form>
+          <a href="/dashboard" class="px-6 py-2 bg-gray-800 rounded-lg">
+            Back to dashboard
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+</body>
+</html>

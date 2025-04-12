@@ -131,4 +131,65 @@ router.get('/history', isLoggedIn, async (req, res) => {
   }
 });
 
+
+// GET Single Interview for Review
+router.get('/review/:id', isLoggedIn, async (req, res) => {
+  try {
+    const interview = await Interview.findById(req.params.id);
+    
+    if (!interview || !interview.userId.equals(req.user._id)) {
+      return res.status(404).render('error', { 
+        user: req.user,
+        error: 'Interview not found' 
+      });
+    }
+    
+    res.render('review', { 
+      interview,
+      user: req.user,
+      activePage: 'history'
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).render('error', { 
+      user: req.user,
+      error: 'Server error' 
+    });
+  }
+});
+
+// POST Retry Interview
+router.post('/retry/:id', isLoggedIn, async (req, res) => {
+  try {
+    const original = await Interview.findById(req.params.id);
+    
+    if (!original || !original.userId.equals(req.user._id)) {
+      return res.status(404).json({ error: 'Interview not found' });
+    }
+
+    // Redirect to interview page with prompt as URL parameter
+    res.redirect(`/interview?prompt=${encodeURIComponent(original.prompt)}&interviewType=${original.interviewType || 'technical'}`);
+    
+  } catch (err) {
+    console.error('Retry error:', err);
+    res.status(500).json({ error: 'Failed to retry interview' });
+  }
+});
+
+// GET Interview Data for Retry (API)
+router.get('/api/interviews/:id', isLoggedIn, async (req, res) => {
+  try {
+    const interview = await Interview.findById(req.params.id);
+    if (!interview || !interview.userId.equals(req.user._id)) {
+      return res.status(404).json({ error: 'Not found' });
+    }
+    res.json({
+      prompt: interview.prompt,
+      interviewType: interview.interviewType
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 module.exports = router;

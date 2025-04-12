@@ -17,6 +17,10 @@ const app = express();
 const dburl=process.env.MONGO_URI;
 const gkey=process.env.GEMINI_API_KEY;
 
+
+
+
+
 // Routes
 const authRoutes = require('./routes/auth');
 const interviewRoutes = require('./routes/interview');
@@ -50,7 +54,14 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
-
+// Add this near your other middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ 
+    error: 'Operation failed',
+    ...(process.env.NODE_ENV === 'development' && { details: err.message })
+  });
+});
 
 app.use((req, res, next) => {
   res.locals.error = null; // Initialize error

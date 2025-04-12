@@ -264,27 +264,90 @@
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
-  <script>
-    // Form submission loader
-    document.querySelector('form').addEventListener('submit', function(e) {
-      const button = this.querySelector('button[type="submit"]');
-      button.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> PROCESSING NEURAL RESPONSE...';
-      button.classList.add('cursor-not-allowed', 'opacity-75');
-      
-      // Add loading animation to the card
-      const card = this.closest('.neural-card');
-      card.classList.add('animate__animated', 'animate__pulse', 'animate__infinite');
-    });
 
-    // Typewriter effect for new responses
-    if (response) {
-      setTimeout(() => {
-        document.querySelector('.typewriter').style.animation = 'none';
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Get URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const prompt = urlParams.get('prompt');
+    const interviewType = urlParams.get('interviewType');
+
+    // Pre-fill form if parameters exist
+    if (prompt) {
+      document.querySelector('textarea[name="prompt"]').value = decodeURIComponent(prompt);
+    }
+    
+    if (interviewType) {
+      document.querySelectorAll('input[name="interviewType"]').forEach(radio => {
+        if (radio.value === interviewType) {
+          radio.checked = true;
+        }
+      });
+    }
+
+    // Form submission loader
+    document.querySelector('form')?.addEventListener('submit', function(e) {
+      const button = this.querySelector('button[type="submit"]');
+      if (button) {
+        button.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> PROCESSING...';
+        button.classList.add('cursor-not-allowed', 'opacity-75');
+      }
+    });
+  });
+
+      // Typewriter effect for responses
+      if (typeof response !== 'undefined' && response) {
+        const typewriter = document.querySelector('.typewriter');
+        if (typewriter) {
+          setTimeout(() => {
+            typewriter.style.animation = 'none';
+            setTimeout(() => typewriter.style.animation = '', 10);
+          }, 100);
+        }
+      }
+    };
+
+    // Form submission handler
+    const setupFormSubmission = () => {
+      const form = document.querySelector('form');
+      if (form) {
+        form.addEventListener('submit', function(e) {
+          const button = this.querySelector('button[type="submit"]');
+          if (button) {
+            button.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> PROCESSING NEURAL RESPONSE...';
+            button.classList.add('cursor-not-allowed', 'opacity-75');
+          }
+          
+          const card = this.closest('.neural-card');
+          if (card) {
+            card.classList.add('animate__animated', 'animate__pulse', 'animate__infinite');
+          }
+        });
+      }
+    };
+
+    // Toast notification function
+    const showToast = (message) => {
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toast-message');
+      
+      if (toast && toastMessage) {
+        toastMessage.textContent = message;
+        toast.classList.remove('hidden');
+        toast.classList.add('show');
+        
         setTimeout(() => {
-          document.querySelector('.typewriter').style.animation = '';
-        }, 10);
-      }, 100);
-     } 
-  </script>
+          toast.classList.remove('show');
+          setTimeout(() => toast.classList.add('hidden'), 300);
+        }, 3000);
+      }
+    };
+
+    // Initialize everything
+    initializeInterviewPage();
+    setupFormSubmission();
+  });
+</script>
+
 </body>
 </html>
