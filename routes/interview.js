@@ -93,42 +93,36 @@ router.post('/', isLoggedIn, apiLimiter, async (req, res) => {
   }
 });
 
-
-
-
 // GET /interview/history - show interview history
 router.get('/history', isLoggedIn, async (req, res) => {
   try {
-    const interviews = await Interview.find({ userId: req.user._id })
+      const interviewCount = await Interview.countDocuments({ userId: req.user._id });
+        const interviews = await Interview.find({ userId: req.user._id })
+          .sort({ createdAt: -1 })
+          .limit(5);
+          const averageScore = (interviewCount/100)*100; // Replace with actual calculation
+    const history = await Interview.find({ userId: req.user._id })
       .sort({ createdAt: -1 })
-      .lean();
-    
-    const interviewCount = interviews.length;
-    const averageScore = 84; // Replace with your actual calculation logic
+      .lean(); // Convert to plain objects for Handlebars
     
     res.render('interview_history', { 
       user: req.user, 
-      history: interviews,
+      history,
       activePage: 'history',
-      interviews: interviews.slice(0, 5), // Show only last 5 interviews in stats
+      interviews,
       interviewCount,
       averageScore,
       recommendationsCount: 5,
-      formatDate: (date) => date.toLocaleString()
+      formatDate: (date) => date.toLocaleString() // Helper function for formatting
     });
 
   } catch (err) {
     console.error(err);
-    // Render the interview_history page with error message instead of error.ejs
-    res.status(500).render('interview_history', { 
+    res.status(500).render('error', { 
       user: req.user,
-      error: 'Failed to load interview history',
-      history: [],
-      interviews: [],
-      interviewCount: 0,
-      averageScore: 0,
-      recommendationsCount: 0
+      error: 'Failed to load interview history' 
     });
   }
 });
+
 module.exports = router;

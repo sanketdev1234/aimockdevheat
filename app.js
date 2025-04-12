@@ -14,7 +14,7 @@ const authRoutes = require('./routes/auth');
 const interviewRoutes = require('./routes/interview');
 
 // MongoDB connection
-mongoose.connect('mongodb://localhost:27017', {
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })

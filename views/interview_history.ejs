@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NeuroInterview | AI-Powered Mock Interviews</title>
+  <title>Neural History | AI Interview Archive</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -70,6 +70,17 @@
       100% { transform: translate(40px, 40px); }
     }
     
+    .interview-item {
+      transform-origin: top center;
+      opacity: 0;
+      animation: fadeInUp 0.6s forwards;
+    }
+    
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
     .glow-button {
       position: relative;
       overflow: hidden;
@@ -97,14 +108,10 @@
       100% { transform: translateX(100%) rotate(30deg); }
     }
     
-    .ai-response {
-      border-left: 3px solid var(--neural-primary);
-      animation: fadeInLeft 0.8s ease-out;
-    }
-    
     .typewriter {
       overflow: hidden;
-      white-space: pre-wrap;
+      border-right: 2px solid var(--neural-primary);
+      white-space: nowrap;
       animation: 
         typing 3.5s steps(40, end),
         blink-caret 0.75s step-end infinite;
@@ -129,26 +136,6 @@
       50% { transform: scale(1.1); opacity: 1; }
       100% { transform: scale(0.95); opacity: 0.7; }
     }
-    
-    .floating {
-      animation: floating 6s ease-in-out infinite;
-    }
-    
-    @keyframes floating {
-      0% { transform: translateY(0px); }
-      50% { transform: translateY(-15px); }
-      100% { transform: translateY(0px); }
-    }
-    
-    .input-highlight {
-      transition: all 0.3s ease;
-      background: rgba(255, 255, 255, 0.05);
-    }
-    
-    .input-highlight:focus {
-      background: rgba(255, 255, 255, 0.1);
-      box-shadow: 0 0 0 2px rgba(0, 240, 255, 0.3);
-    }
   </style>
 </head>
 <body class="min-h-screen overflow-x-hidden">
@@ -157,152 +144,183 @@
   <%- include('partials/navbar') %>
 
   <div class="container mx-auto px-4 py-12 relative z-10">
-    <!-- Floating AI Elements -->
-    <div class="absolute -right-20 top-1/4 opacity-10 floating">
-      <i class="fas fa-atom text-8xl text-blue-400"></i>
-    </div>
-    <div class="absolute -left-20 bottom-1/4 opacity-10 floating" style="animation-delay: 2s;">
-      <i class="fas fa-network-wired text-8xl text-purple-400"></i>
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 animate__animated animate__fadeIn">
+      <div>
+        <h1 class="text-4xl font-bold gradient-text mb-2">Interview Neural Archive</h1>
+        <p class="text-gray-400">AI-powered analysis of your historical interview performance</p>
+      </div>
+      <div class="mt-4 md:mt-0 flex items-center">
+        <span class="text-sm text-gray-400 mr-3">Active Analysis</span>
+        <div class="pulse-dot w-3 h-3 rounded-full bg-green-400"></div>
+      </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="max-w-4xl mx-auto">
-      <!-- Header -->
-      <div class="flex items-center mb-8 animate__animated animate__fadeIn">
-        <div class="mr-4">
-          <div class="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
-            <i class="fas fa-robot text-xl text-white"></i>
-          </div>
-        </div>
-        <div>
-          <h1 class="text-3xl font-bold gradient-text">NeuroInterview Session</h1>
-          <p class="text-gray-400">AI-powered mock interview simulation</p>
+    <!-- Stats Bar -->
+    <div class="neural-card p-6 mb-8 grid grid-cols-2 md:grid-cols-4 gap-4 animate__animated animate__fadeInUp">
+      <div class="text-center">
+        <p class="text-sm text-gray-400">Total Sessions</p>
+        <p class="text-2xl font-bold"><%= interviews.length %></p>
+      </div>
+      <div class="text-center">
+        <p class="text-sm text-gray-400">Avg. Duration</p>
+        <p class="text-2xl font-bold">12:45</p>
+      </div>
+      <div class="text-center">
+        <p class="text-sm text-gray-400">Success Rate</p>
+        <p class="text-2xl font-bold">84%</p>
+      </div>
+      <div class="text-center">
+        <p class="text-sm text-gray-400">AI Insights</p>
+        <p class="text-2xl font-bold">7</p>
+      </div>
+    </div>
+
+    <!-- Interview List -->
+    <div class="mb-12">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold gradient-text">Session History</h2>
+        <div class="flex items-center">
+          <span class="text-sm text-gray-400 mr-3">Sort By:</span>
+          <select class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-1 text-sm">
+            <option>Newest First</option>
+            <option>Oldest First</option>
+            <option>Highest Score</option>
+          </select>
         </div>
       </div>
 
-      <!-- Interview Panel -->
-      <div class="neural-card p-8 mb-8 animate__animated animate__fadeInUp">
-        <form action="/interview" method="POST" class="space-y-6">
-          <!-- Interview Type Selector -->
-          <div>
-            <label class="block text-sm font-medium text-gray-400 mb-3">Interview Mode</label>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <label class="relative cursor-pointer">
-                <input type="radio" name="interviewType" value="technical" class="hidden peer" checked>
-                <div class="neural-card p-4 text-center transition-all peer-checked:border-blue-500 peer-checked:ring-2 peer-checked:ring-blue-500/30">
-                  <i class="fas fa-code text-2xl mb-2 text-blue-400"></i>
-                  <h3 class="font-medium">Technical</h3>
-                  <p class="text-xs text-gray-400 mt-1">Coding & Algorithms</p>
+      <% if (interviews.length > 0) { %>
+        <div class="space-y-4">
+          <% interviews.forEach((interview, index) => { %>
+            <div class="interview-item neural-card p-6" style="animation-delay: <%= index * 0.1 %>s">
+              <div class="flex flex-col md:flex-row md:items-center justify-between">
+                <div class="mb-4 md:mb-0 md:w-2/3">
+                  <div class="flex items-center mb-2">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center mr-3">
+                      <i class="fas fa-<%= interview.interviewType === 'technical' ? 'code' : interview.interviewType === 'behavioral' ? 'comments' : 'project-diagram' %> text-white"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-medium"><%= interview.prompt.substring(0, 60) %><%= interview.prompt.length > 60 ? '...' : '' %></h3>
+                      <p class="text-sm text-gray-400">
+                        <i class="far fa-clock mr-1"></i> 
+                        <%= new Date(interview.createdAt).toLocaleDateString('en-US', { 
+                          year: 'numeric', 
+                          month: 'short', 
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        }) %>
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </label>
-              <label class="relative cursor-pointer">
-                <input type="radio" name="interviewType" value="behavioral" class="hidden peer">
-                <div class="neural-card p-4 text-center transition-all peer-checked:border-purple-500 peer-checked:ring-2 peer-checked:ring-purple-500/30">
-                  <i class="fas fa-comments text-2xl mb-2 text-purple-400"></i>
-                  <h3 class="font-medium">Behavioral</h3>
-                  <p class="text-xs text-gray-400 mt-1">Soft Skills</p>
+                <div class="flex flex-col sm:flex-row sm:space-x-3 space-y-2 sm:space-y-0">
+                  <a href="#" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-center transition-colors">
+                    <i class="fas fa-eye mr-2"></i> Review
+                  </a>
+                  <a href="#" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 rounded-lg text-center transition-colors">
+                    <i class="fas fa-chart-line mr-2"></i> Analyze
+                  </a>
                 </div>
-              </label>
-              <label class="relative cursor-pointer">
-                <input type="radio" name="interviewType" value="system-design" class="hidden peer">
-                <div class="neural-card p-4 text-center transition-all peer-checked:border-teal-500 peer-checked:ring-2 peer-checked:ring-teal-500/30">
-                  <i class="fas fa-project-diagram text-2xl mb-2 text-teal-400"></i>
-                  <h3 class="font-medium">System Design</h3>
-                  <p class="text-xs text-gray-400 mt-1">Architecture</p>
+              </div>
+              
+              <!-- AI Analysis Preview -->
+              <div class="mt-4 pt-4 border-t border-gray-800 hidden md:block">
+                <div class="flex items-center text-sm text-gray-400">
+                  <i class="fas fa-robot text-teal-400 mr-2"></i>
+                  <span class="truncate">
+                    AI Analysis: "Your response showed strong technical knowledge but could improve on explaining thought process..."
+                  </span>
                 </div>
-              </label>
+              </div>
             </div>
+          <% }); %>
+        </div>
+      <% } else { %>
+        <div class="neural-card p-12 text-center animate__animated animate__fadeIn">
+          <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gray-800 flex items-center justify-center">
+            <i class="fas fa-comment-slash text-3xl text-gray-600"></i>
           </div>
-
-          <!-- Question Input -->
-          <div>
-            <label class="block text-sm font-medium text-gray-400 mb-2">Your Question/Topic</label>
-            <textarea name="prompt" rows="4" 
-              class="input-highlight w-full p-4 border border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Ask about React hooks, system architecture, or any tech topic..."></textarea>
-          </div>
-
-          <!-- Submit Button -->
-          <button type="submit" 
-            class="w-full glow-button py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg font-bold text-white relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20">
+          <h3 class="text-xl font-medium text-gray-300 mb-2">No Interview History Found</h3>
+          <p class="text-gray-500 mb-6">Your completed interview sessions will appear here for neural analysis</p>
+          <a href="/interview" class="inline-block px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg text-white hover:shadow-lg transition-all glow-button">
             <span class="relative z-10">
-              <i class="fas fa-bolt mr-2"></i> Generate AI Response
+              <i class="fas fa-plus mr-2"></i> Start New Interview
             </span>
-          </button>
-        </form>
-      </div>
-
-    
-
-
-      <% if (error) { %>
-        <!-- Error Message -->
-        <div class="neural-card p-6 border-l-4 border-red-500 bg-red-900/20 animate__animated animate__shakeX">
-          <div class="flex items-start">
-            <i class="fas fa-exclamation-triangle text-red-400 mt-1 mr-3"></i>
-            <div>
-              <h3 class="font-bold text-red-400 mb-1">Neural Network Error</h3>
-              <p class="text-gray-300"><%- error %></p>
-            </div>
-          </div>
+          </a>
         </div>
       <% } %>
+    </div>
 
-      <!-- Tips Section -->
-      <div class="neural-card p-8 animate__animated animate__fadeInUp">
-        <div class="flex items-center mb-6">
-          <div class="w-10 h-10 rounded-full bg-teal-500/10 flex items-center justify-center mr-4">
-            <i class="fas fa-lightbulb text-teal-400"></i>
-          </div>
-          <h2 class="text-2xl font-bold gradient-text">AI Interview Tips</h2>
+    <!-- Pagination -->
+    <% if (interviews.length > 0) { %>
+      <div class="flex justify-center animate__animated animate__fadeIn">
+        <nav class="neural-card px-4 py-2 flex space-x-2">
+          <a href="#" class="px-3 py-1 rounded-lg bg-gray-800 text-blue-400">&laquo;</a>
+          <a href="#" class="px-3 py-1 rounded-lg bg-blue-600 text-white">1</a>
+          <a href="#" class="px-3 py-1 rounded-lg hover:bg-gray-800">2</a>
+          <a href="#" class="px-3 py-1 rounded-lg hover:bg-gray-800">3</a>
+          <a href="#" class="px-3 py-1 rounded-lg bg-gray-800 text-blue-400">&raquo;</a>
+        </nav>
+      </div>
+    <% } %>
+
+    <!-- AI Analysis Section -->
+    <div class="neural-card p-8 mt-12 animate__animated animate__fadeInUp">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-2xl font-bold gradient-text">Neural Performance Insights</h2>
+        <div class="flex items-center">
+          <span class="text-xs text-gray-400 mr-2">Powered by GPT-4</span>
+          <i class="fas fa-brain text-purple-400"></i>
         </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="neural-card p-5 hover:border-blue-500/30 transition-all">
-            <div class="flex items-center mb-3">
-              <div class="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center mr-3">
-                <i class="fas fa-code text-blue-400"></i>
-              </div>
-              <h3 class="font-medium">Technical Interviews</h3>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="neural-card p-5">
+          <div class="flex items-center mb-4">
+            <div class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center mr-3">
+              <i class="fas fa-thumbs-up text-green-400"></i>
             </div>
-            <ul class="text-sm text-gray-400 space-y-2">
-              <li class="flex items-start">
-                <i class="fas fa-check-circle text-green-400 mt-1 mr-2"></i>
-                <span>Explain your thought process out loud</span>
-              </li>
-              <li class="flex items-start">
-                <i class="fas fa-check-circle text-green-400 mt-1 mr-2"></i>
-                <span>Start with brute force solution first</span>
-              </li>
-              <li class="flex items-start">
-                <i class="fas fa-check-circle text-green-400 mt-1 mr-2"></i>
-                <span>Ask clarifying questions</span>
-              </li>
-            </ul>
+            <h3 class="font-medium">Strengths</h3>
           </div>
-          
-          <div class="neural-card p-5 hover:border-purple-500/30 transition-all">
-            <div class="flex items-center mb-3">
-              <div class="w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center mr-3">
-                <i class="fas fa-comments text-purple-400"></i>
-              </div>
-              <h3 class="font-medium">Behavioral Interviews</h3>
+          <ul class="space-y-2 text-sm text-gray-300">
+            <li class="flex items-start">
+              <i class="fas fa-check-circle text-green-400 mt-1 mr-2"></i>
+              <span>Excellent technical knowledge in JavaScript (87% accuracy)</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check-circle text-green-400 mt-1 mr-2"></i>
+              <span>Strong problem-solving approach (92% efficiency)</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check-circle text-green-400 mt-1 mr-2"></i>
+              <span>Good time management in coding challenges</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="neural-card p-5">
+          <div class="flex items-center mb-4">
+            <div class="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center mr-3">
+              <i class="fas fa-exclamation-triangle text-red-400"></i>
             </div>
-            <ul class="text-sm text-gray-400 space-y-2">
-              <li class="flex items-start">
-                <i class="fas fa-check-circle text-green-400 mt-1 mr-2"></i>
-                <span>Use STAR method for stories</span>
-              </li>
-              <li class="flex items-start">
-                <i class="fas fa-check-circle text-green-400 mt-1 mr-2"></i>
-                <span>Be specific with examples</span>
-              </li>
-              <li class="flex items-start">
-                <i class="fas fa-check-circle text-green-400 mt-1 mr-2"></i>
-                <span>Show enthusiasm and curiosity</span>
-              </li>
-            </ul>
+            <h3 class="font-medium">Areas to Improve</h3>
           </div>
+          <ul class="space-y-2 text-sm text-gray-300">
+            <li class="flex items-start">
+              <i class="fas fa-arrow-up text-yellow-400 mt-1 mr-2"></i>
+              <span>System design explanations need more structure</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-arrow-up text-yellow-400 mt-1 mr-2"></i>
+              <span>Increase code optimization suggestions</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-arrow-up text-yellow-400 mt-1 mr-2"></i>
+              <span>Practice behavioral question storytelling</span>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
@@ -310,22 +328,32 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
   <script>
-    // Form submission animation
-    document.querySelector('form').addEventListener('submit', function(e) {
-      const button = this.querySelector('button[type="submit"]');
-      button.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> Processing...';
-      button.classList.add('cursor-not-allowed', 'opacity-75');
+    // Trigger animations when elements come into view
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate__animated', 'animate__fadeInUp');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.neural-card, .interview-item').forEach(card => {
+      observer.observe(card);
     });
 
-
-    // Animate radio card selections
-    document.querySelectorAll('input[name="interviewType"]').forEach(radio => {
-      radio.addEventListener('change', function() {
-        this.closest('label').querySelector('div').classList.add('animate__animated', 'animate__pulse');
+    // Typewriter effect for AI insights
+    const typewriterElements = document.querySelectorAll('.typewriter');
+    typewriterElements.forEach(el => {
+      const text = el.textContent;
+      el.textContent = '';
+      setTimeout(() => {
+        el.style.animation = 'none';
         setTimeout(() => {
-          this.closest('label').querySelector('div').classList.remove('animate__animated', 'animate__pulse');
-        }, 500);
-      });
+          el.textContent = text;
+          el.style.animation = '';
+        }, 10);
+      }, 500);
     });
   </script>
 </body>
