@@ -1,3 +1,9 @@
+
+if(process.env.NODE_ENV!="production"){
+  require("dotenv").config();
+  }
+const gkey=process.env.GEMINI_API_KEY;
+
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
