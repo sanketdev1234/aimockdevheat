@@ -57,7 +57,7 @@ router.post('/', isLoggedIn, apiLimiter, async (req, res) => {
       },
       {
         headers: { 'Content-Type': 'application/json' },
-        params: { key: process.env.GEMINI_API_KEY },
+        params: { key: gkey },
         timeout: 10000 // 10 second timeout
       }
     );

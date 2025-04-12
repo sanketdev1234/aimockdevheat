@@ -1,5 +1,10 @@
-// app.js
-require('dotenv').config();
+
+
+if(process.env.NODE_ENV!="production"){
+  require("dotenv").config();
+  }
+
+
 const express = require('express');
 const mongoose = require('mongoose');
 const session = require('express-session');
@@ -9,12 +14,15 @@ const axios = require('axios');
 
 const app = express();
 
+const dburl=process.env.MONGO_URI;
+const gkey=process.env.GEMINI_API_KEY;
+
 // Routes
 const authRoutes = require('./routes/auth');
 const interviewRoutes = require('./routes/interview');
 
 // MongoDB connection
-mongoose.connect(process.env.MONGO_URI, {
+mongoose.connect(dburl, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
@@ -69,7 +77,7 @@ app.post('/api/gemini', async (req, res) => {
       },
       {
         headers: { 'Content-Type': 'application/json' },
-        params: { key: process.env.GEMINI_API_KEY }
+        params: { key: gkey}
       }
     );
 
